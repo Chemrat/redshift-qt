@@ -51,8 +51,8 @@ bool SystemTray::CreateIcon()
     auto trayIconMenu = new QMenu();
     trayIconMenu->addAction(quitAction);
 
-    _iconEnabled  = std::make_shared<QIcon>(":/resources/redshift-status-on.svg");
-    _iconDisabled = std::make_shared<QIcon>(":/resources/redshift-status-off.svg");
+    _iconEnabled  = std::make_shared<QIcon>(":/icons/redshift-status-on.svg");
+    _iconDisabled = std::make_shared<QIcon>(":/icons/redshift-status-off.svg");
 
     connect(this, &QSystemTrayIcon::activated, this, &SystemTray::onClick);
 
