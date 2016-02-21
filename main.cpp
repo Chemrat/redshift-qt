@@ -1,4 +1,3 @@
-#include "infodialog.h"
 #include "systemtray.h"
 
 #include <QtWidgets/QApplication>
