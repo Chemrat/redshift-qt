@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>icons/redshift-status-off.svg</file>
+        <file>icons/redshift-status-on.svg</file>
+    </qresource>
+</RCC>
