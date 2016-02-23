@@ -3,6 +3,7 @@
 #include <memory>
 
 #include <QtWidgets/QSystemTrayIcon>
+#include <QtCore/QProcess>
 
 class QIcon;
 class QProcess;
@@ -25,6 +26,7 @@ private:
 private:
     void onClick(QSystemTrayIcon::ActivationReason);
     void onQuit();
+    void onRedshiftQuit(int, QProcess::ExitStatus);
 
     void onSuspend();
     // FIXME: this looks bad

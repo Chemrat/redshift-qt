@@ -38,6 +38,12 @@ void SystemTray::onQuit()
     QApplication::quit();
 }
 
+void SystemTray::onRedshiftQuit(int, QProcess::ExitStatus)
+{
+    QMessageBox::critical(0, QObject::tr("Fatal error"), QObject::tr("Redshift process has been terminated unexpectedly"));
+    onQuit();
+}
+
 void SystemTray::onSuspend()
 {
     ToggleRedshift(!_enabled);
@@ -66,6 +72,11 @@ void SystemTray::onTimeout()
     ToggleRedshift(true);
 }
 
+void SystemTray::onGetInfo()
+{
+
+}
+
 bool SystemTray::CreateIcon()
 {
     if (!QSystemTrayIcon::isSystemTrayAvailable()) {
@@ -90,6 +101,8 @@ bool SystemTray::StartRedshift()
 {
     _redshiftProcess = std::make_shared<QProcess>();
     _redshiftProcess->start("redshift");
+
+    connect(_redshiftProcess.get(), (void (QProcess::*)(int,QProcess::ExitStatus))&QProcess::finished, this, &SystemTray::onRedshiftQuit);
 
     if (!_redshiftProcess->waitForStarted(5000))
     {
