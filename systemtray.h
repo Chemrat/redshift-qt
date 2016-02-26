@@ -46,5 +46,6 @@ private:
     std::shared_ptr<QProcess> _redshiftProcess;
     std::shared_ptr<QTimer> _suspendTimer;
 
+    bool _warnOnRedshiftQuit = true;
     bool _enabled = false;
 };

@@ -30,6 +30,7 @@ void SystemTray::onQuit()
     setIcon(*_iconDisabled);
     if (_redshiftProcess && _redshiftProcess->pid())
     {
+        _warnOnRedshiftQuit = false;
         _redshiftProcess->terminate();
         if (!_redshiftProcess->waitForFinished())
             qDebug() << "Redshift process failed to terminate";
@@ -40,7 +41,8 @@ void SystemTray::onQuit()
 
 void SystemTray::onRedshiftQuit(int, QProcess::ExitStatus)
 {
-    QMessageBox::critical(0, QObject::tr("Fatal error"), QObject::tr("Redshift process has been terminated unexpectedly"));
+    if (_warnOnRedshiftQuit)
+        QMessageBox::critical(0, QObject::tr("Fatal error"), QObject::tr("Redshift process has been terminated unexpectedly"));
     onQuit();
 }
 
