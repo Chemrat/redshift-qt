@@ -41,8 +41,10 @@ void SystemTray::onQuit()
 
 void SystemTray::onRedshiftQuit(int, QProcess::ExitStatus)
 {
-    if (_warnOnRedshiftQuit)
-        QMessageBox::critical(0, QObject::tr("Fatal error"), QObject::tr("Redshift process has been terminated unexpectedly"));
+    if (!_warnOnRedshiftQuit)
+        return;
+
+    QMessageBox::critical(0, QObject::tr("Fatal error"), QObject::tr("Redshift process has been terminated unexpectedly"));
     onQuit();
 }
 
