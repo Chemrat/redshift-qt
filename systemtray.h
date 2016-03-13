@@ -19,6 +19,7 @@ public:
     bool CreateIcon();
     bool StartRedshift();
     void ToggleRedshift(bool enable = true);
+    void StopRedshift();
 
 private:
     void CreateMenu();

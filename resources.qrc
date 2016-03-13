@@ -2,5 +2,7 @@
     <qresource prefix="/">
         <file>icons/redshift-status-off.svg</file>
         <file>icons/redshift-status-on.svg</file>
+        <file>icons/redshift-status-off.png</file>
+        <file>icons/redshift-status-on.png</file>
     </qresource>
 </RCC>

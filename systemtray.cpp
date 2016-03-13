@@ -6,6 +6,7 @@
 #include <QtCore/QProcess>
 #include <QtCore/QDebug>
 #include <QtCore/QTimer>
+#include <QtGui/QIcon>
 
 #include <signal.h>
 
@@ -28,14 +29,6 @@ void SystemTray::onClick(QSystemTrayIcon::ActivationReason reason)
 void SystemTray::onQuit()
 {
     setIcon(*_iconDisabled);
-    if (_redshiftProcess && _redshiftProcess->pid())
-    {
-        _warnOnRedshiftQuit = false;
-        _redshiftProcess->terminate();
-        if (!_redshiftProcess->waitForFinished())
-            qDebug() << "Redshift process failed to terminate";
-    }
-
     QApplication::quit();
 }
 
@@ -90,8 +83,9 @@ bool SystemTray::CreateIcon()
 
     CreateMenu();
 
-    _iconEnabled  = std::make_shared<QIcon>(":/icons/redshift-status-on.svg");
-    _iconDisabled = std::make_shared<QIcon>(":/icons/redshift-status-off.svg");
+    _iconEnabled  = std::make_shared<QIcon>(":/icons/redshift-status-on.png");
+    _iconDisabled = std::make_shared<QIcon>(":/icons/redshift-status-off.png");
+
     setIcon(*_iconEnabled);
 
     connect(this, &QSystemTrayIcon::activated, this, &SystemTray::onClick);
@@ -136,6 +130,17 @@ void SystemTray::ToggleRedshift(bool enable)
     setIcon(enable ? *_iconEnabled : *_iconDisabled);
     qDebug() << "Redshift status change: " << (enable ? "enabled" : "disabled");
     kill(_redshiftProcess->pid(), SIGUSR1);
+}
+
+void SystemTray::StopRedshift()
+{
+    if (_redshiftProcess && _redshiftProcess->pid())
+    {
+        _warnOnRedshiftQuit = false;
+        _redshiftProcess->terminate();
+        if (!_redshiftProcess->waitForFinished())
+            qDebug() << "Redshift process failed to terminate";
+    }
 }
 
 void SystemTray::CreateMenu()

@@ -10,6 +10,8 @@ int main(int argc, char *argv[])
     QApplication::setQuitOnLastWindowClosed(false);
 
     SystemTray tray;
+    QApplication::connect(&a, &QApplication::aboutToQuit, &tray, &SystemTray::StopRedshift);
+
     if (!tray.CreateIcon())
         return 1;
 
