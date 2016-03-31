@@ -28,6 +28,7 @@ private:
     void onClick(QSystemTrayIcon::ActivationReason);
     void onQuit();
     void onRedshiftQuit(int, QProcess::ExitStatus);
+    void onRedshiftOutput();
 
     void onSuspend();
     // FIXME: this looks bad
@@ -40,6 +41,9 @@ private:
     void onGetInfo();
 
 private:
+    QString _colorTemp;
+    QString _info;
+
     std::shared_ptr<QIcon> _iconEnabled;
     std::shared_ptr<QIcon> _iconDisabled;
     std::shared_ptr<QAction> _suspendMenu;

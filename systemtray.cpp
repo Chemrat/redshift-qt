@@ -21,7 +21,12 @@ void SystemTray::onClick(QSystemTrayIcon::ActivationReason reason)
     switch (reason)
     {
     case QSystemTrayIcon::ActivationReason::Trigger:
+    case QSystemTrayIcon::ActivationReason::DoubleClick:
         ToggleRedshift(!_enabled);
+        break;
+    case QSystemTrayIcon::ActivationReason::MiddleClick:
+    case QSystemTrayIcon::ActivationReason::Context:
+    case QSystemTrayIcon::ActivationReason::Unknown:
         break;
     }
 }
@@ -39,6 +44,22 @@ void SystemTray::onRedshiftQuit(int, QProcess::ExitStatus)
 
     QMessageBox::critical(0, QObject::tr("Fatal error"), QObject::tr("Redshift process has been terminated unexpectedly"));
     onQuit();
+}
+
+void SystemTray::onRedshiftOutput()
+{
+    if (!_redshiftProcess)
+        return;
+
+    QTextStream stream(_redshiftProcess.get());
+    while (!stream.atEnd()) {
+        auto line = stream.readLine();
+        qDebug() << line;
+        if (line.startsWith("Color temperature"))
+            _colorTemp = line;
+        else
+            _info += "\n" + line;
+    }
 }
 
 void SystemTray::onSuspend()
@@ -71,7 +92,7 @@ void SystemTray::onTimeout()
 
 void SystemTray::onGetInfo()
 {
-
+    QMessageBox::information(nullptr, "Redshift Information", _info + "\n" + _colorTemp, QMessageBox::Ok);
 }
 
 bool SystemTray::CreateIcon()
@@ -98,9 +119,13 @@ bool SystemTray::CreateIcon()
 bool SystemTray::StartRedshift()
 {
     _redshiftProcess = std::make_shared<QProcess>();
-    _redshiftProcess->start("redshift");
+    QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
+    env.insert("LC_ALL", "C");
+    _redshiftProcess->setProcessEnvironment(env);
+    _redshiftProcess->start("redshift -v");
 
     connect(_redshiftProcess.get(), (void (QProcess::*)(int,QProcess::ExitStatus))&QProcess::finished, this, &SystemTray::onRedshiftQuit);
+    connect(_redshiftProcess.get(), &QProcess::readyRead, this, &SystemTray::onRedshiftOutput);
 
     if (!_redshiftProcess->waitForStarted(5000))
     {
@@ -161,6 +186,9 @@ void SystemTray::CreateMenu()
     connect(suspendAction_1h, &QAction::triggered, this, &SystemTray::onSuspend1hour);
     connect(suspendAction_2h, &QAction::triggered, this, &SystemTray::onSuspend2hours);
 
+    auto showInfoAction = new QAction(QObject::tr("Show Info"), this);
+    connect(showInfoAction, &QAction::triggered, this, &SystemTray::onGetInfo);
+
     auto quitAction = new QAction(QObject::tr("&Quit"), nullptr);
     connect(quitAction, &QAction::triggered, this, &SystemTray::onQuit);
 
@@ -169,6 +197,8 @@ void SystemTray::CreateMenu()
     trayIconMenu->addAction(suspendAction_10m);
     trayIconMenu->addAction(suspendAction_1h);
     trayIconMenu->addAction(suspendAction_2h);
+    trayIconMenu->addSeparator();
+    trayIconMenu->addAction(showInfoAction);
     trayIconMenu->addSeparator();
     trayIconMenu->addAction(quitAction);
 
