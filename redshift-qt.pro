@@ -22,3 +22,6 @@ FORMS    +=
 
 RESOURCES += \
     resources.qrc
+
+DISTFILES += \
+    .travis.yml
