@@ -42,6 +42,7 @@ private:
 
 private:
     QString _colorTemp;
+    QString _period;
     QString _info;
 
     std::shared_ptr<QIcon> _iconEnabled;

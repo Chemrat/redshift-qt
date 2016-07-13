@@ -57,6 +57,8 @@ void SystemTray::onRedshiftOutput()
         qDebug() << line;
         if (line.startsWith("Color temperature"))
             _colorTemp = line;
+        else if (line.startsWith("Period:"))
+            _period = line;
         else
             _info += "\n" + line;
     }
@@ -92,7 +94,9 @@ void SystemTray::onTimeout()
 
 void SystemTray::onGetInfo()
 {
-    QMessageBox::information(nullptr, "Redshift Information", _info + "\n" + _colorTemp, QMessageBox::Ok);
+    QMessageBox::information(nullptr, "Redshift Information", _info
+                             + "\n" + _period
+                             + "\n" + _colorTemp, QMessageBox::Ok);
 }
 
 bool SystemTray::CreateIcon()
