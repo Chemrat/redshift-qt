@@ -54,7 +54,7 @@ void SystemTray::onRedshiftOutput()
     QTextStream stream(_redshiftProcess.get());
     while (!stream.atEnd()) {
         auto line = stream.readLine();
-        qDebug() << line;
+        qInfo() << line;
         if (line.startsWith("Color temperature"))
             _colorTemp = line;
         else if (line.startsWith("Period:"))
@@ -134,7 +134,7 @@ bool SystemTray::StartRedshift()
     if (!_redshiftProcess->waitForStarted(5000))
     {
         QMessageBox::critical(0, QObject::tr("Fatal error"), QObject::tr("Failed to start redshift"));
-        qDebug() << "Failed to start redshift";
+        qFatal("Failed to start redshift");
         return false;
     }
 
@@ -147,7 +147,7 @@ void SystemTray::ToggleRedshift(bool enable)
 {
     if (!_redshiftProcess)
     {
-        qDebug() << "QProcess pointer is null";
+        qFatal("QProcess pointer is null");
         return;
     }
 
@@ -157,7 +157,7 @@ void SystemTray::ToggleRedshift(bool enable)
     _enabled = enable;
     _suspendMenu->setChecked(!enable);
     setIcon(enable ? *_iconEnabled : *_iconDisabled);
-    qDebug() << "Redshift status change: " << (enable ? "enabled" : "disabled");
+    qInfo() << "Redshift status change: " << (enable ? "enabled" : "disabled");
     kill(_redshiftProcess->pid(), SIGUSR1);
 }
 
@@ -168,7 +168,7 @@ void SystemTray::StopRedshift()
         _warnOnRedshiftQuit = false;
         _redshiftProcess->terminate();
         if (!_redshiftProcess->waitForFinished())
-            qDebug() << "Redshift process failed to terminate";
+            qCritical() << "Redshift process failed to terminate";
     }
 }
 
