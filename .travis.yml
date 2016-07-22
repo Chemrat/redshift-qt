@@ -5,12 +5,15 @@ dist: trusty
 compiler:
   - gcc
 
-before_install:
-  - sudo add-apt-repository --yes ppa:ubuntu-sdk-team/ppa
-  - sudo apt-get update -qq
-  - sudo apt-get install -y qtbase5-dev qt5-default qttools5-dev-tools
+addons:
+  apt:
+    sources:
+    - beineri/opt-qt551-trusty
+    packages:
+    - qt55base
 
 script:
+  - source /opt/qt55/bin/qt55-env.s
   - qmake redshift-qt.pro
   - make
 
