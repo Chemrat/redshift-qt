@@ -8,7 +8,7 @@ compiler:
 addons:
   apt:
     sources:
-    - beineri/opt-qt551-trusty
+    - sourceline: 'ppa:beineri/opt-qt551-trusty'
     packages:
     - qt55base
 
