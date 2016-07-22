@@ -13,7 +13,7 @@ addons:
     - qt55base
 
 script:
-  - source /opt/qt55/bin/qt55-env.s
+  - source /opt/qt55/bin/qt55-env.sh
   - qmake redshift-qt.pro
   - make
 
