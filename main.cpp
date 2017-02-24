@@ -2,6 +2,16 @@
 
 #include <QtWidgets/QApplication>
 
+#include <signal.h>
+
+SystemTray* globalTray;
+
+void handleSignal(int signum)
+{
+    if (signum == SIGUSR1)
+        globalTray->onSuspend();
+}
+
 int main(int argc, char *argv[])
 {
     Q_INIT_RESOURCE(resources);
@@ -17,6 +27,9 @@ int main(int argc, char *argv[])
 
     if (!tray.StartRedshift())
         return 1;
+
+    globalTray = &tray;
+    signal(SIGUSR1, handleSignal);
 
     return a.exec();
 }
