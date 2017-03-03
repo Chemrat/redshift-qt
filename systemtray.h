@@ -20,6 +20,7 @@ public:
     bool StartRedshift();
     void ToggleRedshift(bool enable = true);
     void StopRedshift();
+    void onSuspend();
 
 private:
     void CreateMenu();
@@ -30,7 +31,6 @@ private:
     void onRedshiftQuit(int, QProcess::ExitStatus);
     void onRedshiftOutput();
 
-    void onSuspend();
     // FIXME: this looks bad
     void onSuspend10minutes();
     void onSuspend1hour();
