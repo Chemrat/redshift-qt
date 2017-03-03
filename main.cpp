@@ -2,9 +2,9 @@
 
 #include <QtWidgets/QApplication>
 
-#include <signal.h>
+#include <csignal>
 
-SystemTray* globalTray;
+SystemTray *globalTray = nullptr;
 
 void handleSignal(int signum)
 {

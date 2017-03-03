@@ -59,7 +59,7 @@ void SystemTray::onRedshiftOutput()
             _colorTemp = line;
         else if (line.startsWith("Period:"))
             _period = line;
-        else
+        else if (!line.startsWith("Status:"))
             _info += "\n" + line;
     }
 }
