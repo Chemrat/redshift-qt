@@ -1,6 +1,8 @@
 #include "systemtray.h"
 
 #include <QtWidgets/QApplication>
+#include <QSharedMemory>
+#include <QDebug>
 
 #include <csignal>
 
@@ -12,9 +14,29 @@ void handleSignal(int signum)
         globalTray->onSuspend();
 }
 
+bool IsInstanceAlreadyRunning(QSharedMemory &memoryLock) {
+    if (!memoryLock.create(1)) {
+        qDebug() << "Failed to create shared memory lock, an instance of redshift-qt might be already running\n"
+                    "or it was not terminated correctly. Trying to clean up the lock...";
+        memoryLock.attach();
+        memoryLock.detach();
+
+        if (!memoryLock.create(1)) {
+            qDebug() << "An insance of redshift-qt is already running, exiting...";
+            return true;
+        }
+    }
+
+    return false;
+}
+
 int main(int argc, char *argv[])
 {
     Q_INIT_RESOURCE(resources);
+
+    QSharedMemory sharedMemoryLock("redshift-qt-lock");
+    if (IsInstanceAlreadyRunning(sharedMemoryLock))
+        return -1;
 
     QApplication a(argc, argv);
     QApplication::setQuitOnLastWindowClosed(false);
