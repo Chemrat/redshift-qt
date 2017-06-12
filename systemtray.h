@@ -1,7 +1,5 @@
 #pragma once
 
-#include <memory>
-
 #include <QtWidgets/QSystemTrayIcon>
 #include <QtCore/QProcess>
 
@@ -45,12 +43,12 @@ private:
     QString _period;
     QString _info;
 
-    std::shared_ptr<QIcon> _iconEnabled;
-    std::shared_ptr<QIcon> _iconDisabled;
-    std::shared_ptr<QAction> _suspendMenu;
+    QIcon _iconEnabled;
+    QIcon _iconDisabled;
+    QAction *_suspendMenu = nullptr;
 
-    std::shared_ptr<QProcess> _redshiftProcess;
-    std::shared_ptr<QTimer> _suspendTimer;
+    QProcess *_redshiftProcess = nullptr;
+    QTimer *_suspendTimer = nullptr;
 
     bool _warnOnRedshiftQuit = true;
     bool _enabled = false;

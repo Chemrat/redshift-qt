@@ -12,8 +12,8 @@
 
 SystemTray::SystemTray()
 {
-    _suspendTimer = std::make_shared<QTimer>(this);
-    connect(_suspendTimer.get(), &QTimer::timeout, this, &SystemTray::onTimeout);
+    _suspendTimer = new QTimer(this);
+    connect(_suspendTimer, &QTimer::timeout, this, &SystemTray::onTimeout);
 }
 
 void SystemTray::onClick(QSystemTrayIcon::ActivationReason reason)
@@ -33,7 +33,7 @@ void SystemTray::onClick(QSystemTrayIcon::ActivationReason reason)
 
 void SystemTray::onQuit()
 {
-    setIcon(*_iconDisabled);
+    setIcon(_iconDisabled);
     QApplication::quit();
 }
 
@@ -51,7 +51,7 @@ void SystemTray::onRedshiftOutput()
     if (!_redshiftProcess)
         return;
 
-    QTextStream stream(_redshiftProcess.get());
+    QTextStream stream(_redshiftProcess);
     while (!stream.atEnd()) {
         auto line = stream.readLine();
         qInfo() << line;
@@ -108,10 +108,10 @@ bool SystemTray::CreateIcon()
 
     CreateMenu();
 
-    _iconEnabled  = std::make_shared<QIcon>(":/icons/redshift-status-on.png");
-    _iconDisabled = std::make_shared<QIcon>(":/icons/redshift-status-off.png");
+    _iconEnabled = QIcon::fromTheme("redshift-status-on", QIcon(":/icons/redshift-status-on.png"));
+    _iconDisabled = QIcon::fromTheme("redshift-status-off", QIcon(":/icons/redshift-status-off.png"));
 
-    setIcon(*_iconEnabled);
+    setIcon(_iconEnabled);
 
     connect(this, &QSystemTrayIcon::activated, this, &SystemTray::onClick);
 
@@ -122,14 +122,14 @@ bool SystemTray::CreateIcon()
 
 bool SystemTray::StartRedshift()
 {
-    _redshiftProcess = std::make_shared<QProcess>();
+    _redshiftProcess = new QProcess(this);
     QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
     env.insert("LC_ALL", "C");
     _redshiftProcess->setProcessEnvironment(env);
     _redshiftProcess->start("redshift -v");
 
-    connect(_redshiftProcess.get(), (void (QProcess::*)(int,QProcess::ExitStatus))&QProcess::finished, this, &SystemTray::onRedshiftQuit);
-    connect(_redshiftProcess.get(), &QProcess::readyRead, this, &SystemTray::onRedshiftOutput);
+    connect(_redshiftProcess, (void (QProcess::*)(int,QProcess::ExitStatus))&QProcess::finished, this, &SystemTray::onRedshiftQuit);
+    connect(_redshiftProcess, &QProcess::readyRead, this, &SystemTray::onRedshiftOutput);
 
     if (!_redshiftProcess->waitForStarted(5000))
     {
@@ -156,7 +156,7 @@ void SystemTray::ToggleRedshift(bool enable)
 
     _enabled = enable;
     _suspendMenu->setChecked(!enable);
-    setIcon(enable ? *_iconEnabled : *_iconDisabled);
+    setIcon(enable ? _iconEnabled : _iconDisabled);
     qInfo() << "Redshift status change: " << (enable ? "enabled" : "disabled");
     kill(_redshiftProcess->pid(), SIGUSR1);
 }
@@ -177,10 +177,10 @@ void SystemTray::CreateMenu()
     // Lifetime of this menu is the same as the application's
     auto trayIconMenu = new QMenu();
 
-    _suspendMenu = std::make_shared<QAction>(QObject::tr("Suspended"), this);
+    _suspendMenu = new QAction(QObject::tr("Suspended"), this);
     _suspendMenu->setCheckable(true);
     _suspendMenu->setChecked(false);
-    connect(_suspendMenu.get(), &QAction::triggered, this, &SystemTray::onSuspend);
+    connect(_suspendMenu, &QAction::triggered, this, &SystemTray::onSuspend);
 
     auto suspendAction_10m = new QAction(QObject::tr("Suspend for 10 minutes"), this);
     auto suspendAction_1h = new QAction(QObject::tr("Suspend for 1 hour"), this);
@@ -196,7 +196,7 @@ void SystemTray::CreateMenu()
     auto quitAction = new QAction(QObject::tr("&Quit"), nullptr);
     connect(quitAction, &QAction::triggered, this, &SystemTray::onQuit);
 
-    trayIconMenu->addAction(_suspendMenu.get());
+    trayIconMenu->addAction(_suspendMenu);
     trayIconMenu->addSeparator();
     trayIconMenu->addAction(suspendAction_10m);
     trayIconMenu->addAction(suspendAction_1h);
