@@ -102,8 +102,7 @@ void SystemTray::onGetInfo()
 bool SystemTray::CreateIcon()
 {
     if (!QSystemTrayIcon::isSystemTrayAvailable()) {
-        QMessageBox::critical(0, QObject::tr("Fatal error"), QObject::tr("No system tray available"));
-        return false;
+        qWarning() << "No system tray available";
     }
 
     CreateMenu();
