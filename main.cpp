@@ -1,7 +1,6 @@
 #include "systemtray.h"
 
 #include <QtWidgets/QApplication>
-#include <QCoreApplication>
 #include <QSharedMemory>
 #include <QDebug>
 
@@ -40,7 +39,7 @@ int main(int argc, char *argv[])
         return -1;
 
     QApplication a(argc, argv);
-    QCoreApplication::setApplicationName("Redshift Qt");
+    a.setApplicationName("Redshift Qt");
     QApplication::setQuitOnLastWindowClosed(false);
 
     SystemTray tray;
