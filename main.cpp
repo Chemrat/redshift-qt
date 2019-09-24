@@ -39,6 +39,7 @@ int main(int argc, char *argv[])
         return -1;
 
     QApplication a(argc, argv);
+    a.setApplicationName("Redshift Qt");
     QApplication::setQuitOnLastWindowClosed(false);
 
     SystemTray tray;
