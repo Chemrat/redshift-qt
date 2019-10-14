@@ -42,6 +42,7 @@ private:
     QString _colorTemp;
     QString _period;
     QString _info;
+    QString _errText;
 
     QIcon _iconEnabled;
     QIcon _iconDisabled;
