@@ -49,6 +49,7 @@ void SystemTray::onRedshiftQuit(int, QProcess::ExitStatus)
         auto line = stream.readLine();
         qInfo() << line;
         _errText += line + "\n";
+    }
 
     QMessageBox::critical(0, QObject::tr("Fatal error"), _errText);
     onQuit();
