@@ -37,12 +37,17 @@ void SystemTray::onQuit()
     QApplication::quit();
 }
 
-void SystemTray::onRedshiftQuit(int, QProcess::ExitStatus)
+void SystemTray::onRedshiftQuit(int exitCode, QProcess::ExitStatus exitStatus)
 {
     if (!_warnOnRedshiftQuit)
         return;
 
-    _errText = "Redshift process has been terminated unexpectedly \n";
+    if (exitStatus == QProcess::ExitStatus::CrashExit) {
+        _errText = "Redshift has crashed with exit code " + QString::number(exitCode) + ":\n";
+    } else {
+        _errText = "Redshift has terminated unexpectedly with exit code " + QString::number(exitCode) + ":\n";
+    }
+
     _redshiftProcess->setReadChannel(QProcess::StandardError);
     QTextStream stream(_redshiftProcess);
     while (!stream.atEnd()) {
@@ -51,7 +56,7 @@ void SystemTray::onRedshiftQuit(int, QProcess::ExitStatus)
         _errText += line + "\n";
     }
 
-    QMessageBox::critical(0, QObject::tr("Fatal error"), _errText);
+    QMessageBox::critical(nullptr, QObject::tr("Fatal error"), _errText);
     onQuit();
 }
 
@@ -136,14 +141,13 @@ bool SystemTray::StartRedshift()
     _redshiftProcess->setProcessEnvironment(env);
     _redshiftProcess->start("redshift -v");
 
-    connect(_redshiftProcess, (void (QProcess::*)(int,QProcess::ExitStatus))&QProcess::finished, this, &SystemTray::onRedshiftQuit);
+    connect(_redshiftProcess, static_cast<void (QProcess::*)(int,QProcess::ExitStatus)>(&QProcess::finished), this, &SystemTray::onRedshiftQuit);
     connect(_redshiftProcess, &QProcess::readyRead, this, &SystemTray::onRedshiftOutput);
 
     if (!_redshiftProcess->waitForStarted(5000))
     {
-        QMessageBox::critical(0, QObject::tr("Fatal error"), QObject::tr("Failed to start redshift"));
+        QMessageBox::critical(nullptr, QObject::tr("Fatal error"), QObject::tr("Failed to start redshift"));
         qFatal("Failed to start redshift");
-        return false;
     }
 
     _enabled = true;
@@ -156,7 +160,6 @@ void SystemTray::ToggleRedshift(bool enable)
     if (!_redshiftProcess)
     {
         qFatal("QProcess pointer is null");
-        return;
     }
 
     if (enable == _enabled)
@@ -166,7 +169,7 @@ void SystemTray::ToggleRedshift(bool enable)
     _suspendMenu->setChecked(!enable);
     setIcon(enable ? _iconEnabled : _iconDisabled);
     qInfo() << "Redshift status change: " << (enable ? "enabled" : "disabled");
-    kill(_redshiftProcess->pid(), SIGUSR1);
+    kill(static_cast<pid_t>(_redshiftProcess->pid()), SIGUSR1);
 }
 
 void SystemTray::StopRedshift()

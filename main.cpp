@@ -6,7 +6,7 @@
 
 #include <csignal>
 
-SystemTray *globalTray = nullptr;
+static SystemTray *globalTray = nullptr;
 
 void handleSignal(int signum)
 {

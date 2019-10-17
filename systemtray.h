@@ -26,7 +26,7 @@ private:
 private:
     void onClick(QSystemTrayIcon::ActivationReason);
     void onQuit();
-    void onRedshiftQuit(int, QProcess::ExitStatus);
+    void onRedshiftQuit(int exitCode, QProcess::ExitStatus exitStatus);
     void onRedshiftOutput();
 
     // FIXME: this looks bad
