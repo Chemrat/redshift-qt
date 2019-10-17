@@ -42,7 +42,16 @@ void SystemTray::onRedshiftQuit(int, QProcess::ExitStatus)
     if (!_warnOnRedshiftQuit)
         return;
 
-    QMessageBox::critical(0, QObject::tr("Fatal error"), QObject::tr("Redshift process has been terminated unexpectedly"));
+    _errText = "Redshift process has been terminated unexpectedly \n";
+    _redshiftProcess->setReadChannel(QProcess::StandardError);
+    QTextStream stream(_redshiftProcess);
+    while (!stream.atEnd()) {
+        auto line = stream.readLine();
+        qInfo() << line;
+        _errText += line + "\n";
+    }
+
+    QMessageBox::critical(0, QObject::tr("Fatal error"), _errText);
     onQuit();
 }
 
