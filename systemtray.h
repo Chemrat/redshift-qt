@@ -15,7 +15,7 @@ public:
     SystemTray();
 
     bool CreateIcon();
-    bool StartRedshift();
+    bool StartRedshift(QStringList);
     void ToggleRedshift(bool enable = true);
     void StopRedshift();
     void onSuspend();

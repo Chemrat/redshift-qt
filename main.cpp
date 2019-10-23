@@ -32,6 +32,23 @@ bool IsInstanceAlreadyRunning(QSharedMemory &memoryLock) {
 
 int main(int argc, char *argv[])
 {
+    QStringList argsl = QStringList();
+    bool varg = false;
+
+    for (int i = 1; i < argc; ++i){
+        if(std::string(argv[i]) == "-h" || std::string(argv[i]) == "--help"){
+            qInfo() <<  "Please run `redshift -h` for help output.";
+            exit(-1);
+        }
+
+        if(std::string(argv[i]) == "-v")
+           varg = true;
+
+        argsl.append(argv[i]);
+    }
+    if(!varg)
+       argsl.append("-v");
+       
     Q_INIT_RESOURCE(resources);
 
     QSharedMemory sharedMemoryLock("redshift-qt-lock");
@@ -48,7 +65,7 @@ int main(int argc, char *argv[])
     if (!tray.CreateIcon())
         return 1;
 
-    if (!tray.StartRedshift())
+    if (!tray.StartRedshift(argsl))
         return 1;
 
     globalTray = &tray;
