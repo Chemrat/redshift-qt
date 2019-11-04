@@ -133,13 +133,13 @@ bool SystemTray::CreateIcon()
     return true;
 }
 
-bool SystemTray::StartRedshift()
+bool SystemTray::StartRedshift(QStringList argsl)
 {
     _redshiftProcess = new QProcess(this);
     QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
     env.insert("LC_ALL", "C");
     _redshiftProcess->setProcessEnvironment(env);
-    _redshiftProcess->start("redshift -v");
+    _redshiftProcess->start("redshift", argsl);
 
     connect(_redshiftProcess, static_cast<void (QProcess::*)(int,QProcess::ExitStatus)>(&QProcess::finished), this, &SystemTray::onRedshiftQuit);
     connect(_redshiftProcess, &QProcess::readyRead, this, &SystemTray::onRedshiftOutput);
