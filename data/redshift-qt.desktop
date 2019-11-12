@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.1
+Name=Redshift
+Exec=redshift-qt
+Icon=redshift
+Terminal=false
+Type=Application
+Categories=Utility;
+StartupNotify=true
+Keywords=redshift;filter;eyes
