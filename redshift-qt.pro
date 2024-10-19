@@ -6,7 +6,7 @@
 
 QT       += core gui widgets
 
-QMAKE_CXXFLAGS += -std=c++11
+QMAKE_CXXFLAGS += -std=c++17
 
 TARGET = redshift-qt
 TEMPLATE = app

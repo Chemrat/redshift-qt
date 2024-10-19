@@ -169,12 +169,12 @@ void SystemTray::ToggleRedshift(bool enable)
     _suspendMenu->setChecked(!enable);
     setIcon(enable ? _iconEnabled : _iconDisabled);
     qInfo() << "Redshift status change: " << (enable ? "enabled" : "disabled");
-    kill(static_cast<pid_t>(_redshiftProcess->pid()), SIGUSR1);
+    kill(static_cast<pid_t>(_redshiftProcess->processId()), SIGUSR1);
 }
 
 void SystemTray::StopRedshift()
 {
-    if (_redshiftProcess && _redshiftProcess->pid())
+    if (_redshiftProcess && _redshiftProcess->processId())
     {
         _warnOnRedshiftQuit = false;
         _redshiftProcess->terminate();

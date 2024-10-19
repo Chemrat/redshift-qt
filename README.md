@@ -13,7 +13,7 @@ redshift icons are from redshift project: https://github.com/jonls/redshift
 
 * POSIX signals
 * Redshift in $PATH
-* Qt5
+* Qt 6
 
 ## Installation
 ### Gentoo
